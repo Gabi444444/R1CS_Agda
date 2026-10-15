@@ -14,7 +14,6 @@ module IntepretadorR1CS {a l} (R : Ring a l) where
     renaming (zero to Ring_zero)
   open Algebra.Structures.IsAbelianGroup (Ring.+-isAbelianGroup R) using ()
     renaming (assoc to +-assoc; comm to +-comm; inverse to +-inverse)
-  open  Algebra.Solver.Ring.Simple using (solve; _:=_; con; _:+_; _:-_; _:*_)
   
   ≈-sym = Ring.sym R
   ≈-trans = Ring.trans R
@@ -111,7 +110,7 @@ module IntepretadorR1CS {a l} (R : Ring a l) where
         ≈-trans (+-cong (Ring.refl R) (+-cong (Ring.refl R) +0)) (
         ≈-trans (+-cong (Ring.refl R) 0+)
         0+)))
-  {- dir :  (x * y) ≈ ((((1# + 1# + 1# + 1#) * ((- 1#) + (- 1#))) * 1#)  +  ((0# * x) + ((0# * y) + ((1# * z) + 0# ))))
+  dir :  (x * y) ≈ ((((1# + 1# + 1# + 1#) * ((- 1#) + (- 1#))) * 1#)  +  ((0# * x) + ((0# * y) + ((1# * z) + 0# ))))
   dir = ≈-trans P1 (≈-trans P2 (≈-trans P3 (≈-trans P4 (≈-trans P5 (≈-trans P6 P7)))))
         where
           N : Carrier
@@ -124,19 +123,10 @@ module IntepretadorR1CS {a l} (R : Ring a l) where
           P1 = ≈-sym +0
 
           P2 : (x * y) + 0# ≈ (x * y) + (N + (- N))
-          P2 = ( (N + (- N) ≈ 0#)
-                 (x * y) + (N + - N) ≈ (x * y) + 0#
-                 (x * y) + 0# ≈ ((x * y) + 0#) )
-
-
-          +-cong ≈-refl cancela
+          P2 = +-cong ≈-refl cancela
              where
-               cancela : 0# ≈ N + (((1# + 1# + 1# + 1#) * (1# + 1#)))
-               cancela =
-                 ≈-trans (≈-sym (proj₂ Ring_zero (1# + 1# + 1# + 1#))) (
-                 ≈-trans (*-cong ≈-refl (≈-sym (proj₁ +-inverse (1# + 1#)))) (
-                 ≈-trans (≈-sym (proj₁ distrib (1# + 1# + 1# + 1#) ((- 1#) + (- 1#)) (1# + 1#))) 
-                 (*-cong ≈-refl (+-cong (≈-sym (proj₂ *-identity _)) ≈-refl))))
+               cancela : 0# ≈ N + (- N)
+               cancela = ≈-sym (proj₂ (Algebra.Structures.IsGroup.inverse (Algebra.Structures.IsAbelianGroup.isGroup (Ring.+-isAbelianGroup R))) N)
 
           P3 : (x * y) + (N + (- N)) ≈ N + ((x * y) + (- N))
           P3 = ≈-trans (≈-sym (+-assoc (x * y) N (- N)))
@@ -144,22 +134,19 @@ module IntepretadorR1CS {a l} (R : Ring a l) where
                                (+-assoc N (x * y) (- N)))
 
           P4 : N + ((x * y) + (- N)) ≈ N + z
-          P4 = +-cong ≈-refl ≈-refl 
-
+          P4 = +-cong ≈-refl (+-cong ≈-refl  Zp)
+            where
+               postulate
+                  Zp : - N ≈ ((1# + 1# + 1# + 1#) * (1# + 1#))
+                  
           P5 : N + z ≈ N + ((1# * z) + 0#)
           P5 = +-cong ≈-refl (≈-trans (≈-sym +0) (≈-sym (+-cong idA ≈-refl)))
 
           P6 : N + ((1# * z) + 0#) ≈ N + ((0# * y) + ((1# * z) + 0# ))
-          P6 = +-cong ≈-refl (≈-trans 0+ (≈-sym (+-cong P0 ≈-refl)))
+          P6 = +-cong ≈-refl (≈-trans (≈-sym 0+)(+-cong (≈-sym P0) ≈-refl))
 
           P7 : N + ((0# * y) + ((1# * z) + 0# )) ≈ N + V
-          P7 = (+-cong ≈-refl (≈-sym (+-cong P0 ≈-refl))) -}
-
-  postulate
-      {- esq : ((((0# * 1#) + ((1# * x) + ((0# * y) + ((0# * z) + 0#)))) * ((0# * 1#) + ((0# * x) + ((1# * y) + ((0# * z) + 0#)))))) ≈ (x * y)-}
-      dir : (x * y) ≈ ((((1# + 1# + 1# + 1#) * ((- 1#) + (- 1#))) * 1#)  +  ((0# * x) + ((0# * y) + ((1# * z) + 0# ))))
-                      
-     
+          P7 = +-cong ≈-refl (≈-trans (≈-sym 0+) (+-cong (≈-sym P0) ≈-refl))
 
   prova : CheckCons ax b c wit
   prova = ≈-trans esq dir 
