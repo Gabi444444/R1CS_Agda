@@ -5,7 +5,7 @@ open import Data.Product using (proj₁; proj₂)
 open import Algebra.Structures
 open import Algebra.Bundles using (Ring) 
 
-module IntepretadorR1CS {a l} (R : Ring a l) where
+module Test {a l} (R : Ring a l) where
   open Ring R using (Carrier; _+_; _*_; 0#; 1#; -_; _≈_; +-identity; *-identity; +-cong; *-cong; distrib)
     renaming (zero to Ring_zero)
   open Algebra.Structures.IsAbelianGroup (Ring.+-isAbelianGroup R) using ()
@@ -149,3 +149,4 @@ module IntepretadorR1CS {a l} (R : Ring a l) where
 
   Check : Interpreta MatA MatB MatC wit
   Check = cons prova null 
+
