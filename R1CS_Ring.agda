@@ -2,12 +2,8 @@
 open import Data.Nat renaming (_+_ to _N+_; _*_ to _N*_)
 open import Data.Vec
 open import Data.Product using (proj₁; proj₂)
-open import Relation.Binary.Reasoning.Setoid
-open import Relation.Binary.PropositionalEquality
 open import Algebra.Structures
 open import Algebra.Bundles using (Ring) 
-open import Level using (Level)
-open import Algebra.Solver.Ring.Simple
 
 module IntepretadorR1CS {a l} (R : Ring a l) where
   open Ring R using (Carrier; _+_; _*_; 0#; 1#; -_; _≈_; +-identity; *-identity; +-cong; *-cong; distrib)
